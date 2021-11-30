@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------
 # Name:        webScreenShoter.py
 #
-# Purpose:     This module will use different brower drivers API to capture the
+# Purpose:     This module will use different browser drivers API to capture the
 #              webpage's screen shot img based on the given url. The usr can also
 #              use pyQT-5 QtWebEngineWidgets to download the whole web side by set
 #              the related flag. The user can list all the url he wants to downlad 

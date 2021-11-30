@@ -21,6 +21,10 @@ https://stackoverflow.com/questions/66022042/how-to-let-kubernetes-pod-run-a-loc
 
 ![](doc/img/downloader.png)
 
+Version: v_0.1
+
+
+
 ------
 
 #### Program Setup
@@ -60,23 +64,23 @@ version: v0.1
 
 ###### Module API Usage
 
-1. Downloader init: 
+1. WebDownloader init: 
 
 ```
-soup = urlDownloader(imgFlg=True, linkFlg=True, scriptFlg=True)
+obj = urlDownloader(imgFlg=True, linkFlg=True, scriptFlg=True)
 ```
 
-- imgFlg: Set to "True" to download all the "<img>" tag files. 
-- linkFlg: Set to "True" to download all the html section, image, icon, css file imported by  "<href>"
-- scriptFlg: set to "True" to download  all the js file. 
+- **imgFlg**: Set to "True" to download all the "<img>" tag files. 
+- **linkFlg**: Set to "True" to download all the html section, image, icon, css file imported by  "<href>"
+- **scriptFlg**: set to "True" to download  all the js file. 
 
 2. Call API method savePage to scape url and save the data in a folder 
 
    ```
-   soup.savePage('<url>', '<folder_name>')
+   obj.savePage('<url>', '<folder_name>')
    
    # Exampe:
-   soup.savePage('https://www.google.com', 'www_google_com')
+   obj.savePage('https://www.google.com', 'www_google_com')
    ```
 
 3.  
@@ -101,8 +105,13 @@ soup = urlDownloader(imgFlg=True, linkFlg=True, scriptFlg=True)
    - The image used in the page will be saved in folder: "1_www.carousell.sg_files/img"
    - The html/imge/css import by href will be saved in folder: "1_www.carousell.sg_files/link"
    - The js file used by the page will be saved in fodler: "1_www.carousell.sg_files/script"
+   - The url https://www.carousell.sg/ string will be saved in the file Info.txt
 
 
+
+
+
+------
 
 #### Problem and Solution
 
@@ -138,5 +147,5 @@ If a web use third party's storage to save the image and the net-storage need to
 
 ------
 
-> Last edit by LiuYuancheng(liu_yuan_cheng@hotmail.com) at 13/11/2021
+> Last edit by LiuYuancheng(liu_yuan_cheng@hotmail.com) at 30/11/2021
 
