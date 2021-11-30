@@ -15,7 +15,7 @@ This module will provide API to download the webpage component: html file, image
 
 This module will use different web browser's driver to capture the webpage's screen shot based on the given URL.
 
-**Module detail doc** :
+**Module detail doc** :https://github.com/LiuYuancheng/WebAttestation/blob/main/WebScreenShotReadme.md
 
 ###### PhishperidaPKG
 
@@ -23,7 +23,7 @@ This module is used to encapsulate the NUS-Phishperida project (not OOP) as a bl
 
 NUS-Phishperida project: https://github.com/lindsey98/Phishpedia
 
-**Module detail doc** :
+**Module detail doc** :https://github.com/LiuYuancheng/WebAttestation/blob/main/PhishpediaReadme.md
 
 
 
@@ -41,6 +41,8 @@ For each URL, the program will do below steps:
 If you set the program running under single thread, the program work flow diagram will be shown as below: 
 
 ![](doc/img/workflow.png)
+
+version: v_0.1
 
 
 
