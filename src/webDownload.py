@@ -22,55 +22,56 @@ from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 
 GV_FLG = True # Flag to identify whether use gloval value
-
 if GV_FLG: import webGlobal as gv
 URL_RCD = gv.URL_LIST if GV_FLG else 'urllist.txt' # file to save url list
 RST_DIR = gv.DATA_DIR if GV_FLG else 'datasets'
-URL_FN = 'info.txt' # url file name 
+URL_FN = gv.INFO_RCD_NAME if GV_FLG else 'info.txt' # url file name 
 
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 class urlDownloader(object):
     """ Download the webpage components base on the input url."""
     def __init__(self, imgFlg=True, linkFlg=True, scriptFlg=True):
-        self.url = ''
         self.soup = None
         self.imgFlg = imgFlg
         self.linkFlg = linkFlg
         self.scriptFlg = scriptFlg
+        self.linkType = ('css', 'png', 'ico', 'jpg', 'jpeg', 'mov', 'ogg', 'gif', 'xml','js')
         self.session = requests.Session()
         
     #-----------------------------------------------------------------------------
-    def savePage(self, url, pagefilename='page', txtMD=True):
-        """ Save the web page components based on the input url and dir path.
+    def savePage(self, url, pagefileDir='page', txtMD=True):
+        """ Save the web page components based on the input url and dir name.
         Args:
             url ([try]): web url string.
-            pagefilename (str, optional): path to save the web components.
+            pagefileDir (str, optional): path to save the web components.
         Returns:
             [bool]: whether the components saved the successfully.
         """
-        self.url = url
+        if not ('http' in url):
+            print("> savePage(): The input url is not valid: %s" %str(url))
+            return
         try:
             response = self.session.get(url)
             self.soup = BeautifulSoup(response.text, features="lxml")
-            pagefolder =os.path.join( RST_DIR, pagefilename) # page contents
+            pagefolder =os.path.join( RST_DIR, pagefileDir) # page contents
             if not os.path.exists(pagefolder): os.mkdir(pagefolder)
-            if self.imgFlg: self._soupfindnSave(pagefolder, tag2find='img', inner='src')
-            if self.linkFlg: self._soupfindnSave(pagefolder, tag2find='link', inner='href')
-            if self.scriptFlg: self._soupfindnSave(pagefolder, tag2find='script', inner='src')
-            with open(os.path.join(pagefolder, pagefilename+'.html'), 'wb') as file:
+            if self.imgFlg: self._soupfindnSave(url, pagefolder, tag2find='img', inner='src')
+            if self.linkFlg: self._soupfindnSave(url, pagefolder, tag2find='link', inner='href')
+            if self.scriptFlg: self._soupfindnSave(url, pagefolder, tag2find='script', inner='src')
+            with open(os.path.join(pagefolder, pagefileDir+'.html'), 'wb') as file:
                 file.write(self.soup.prettify('utf-8'))
             if txtMD: 
                 # record the page url under text mode: 
                 with open(os.path.join(pagefolder, URL_FN), "a+", encoding='ISO-8859-1') as f:
-                    f.write(self.url)
+                    f.write(url)
             return True
         except Exception as e:
-            print("> savePage(): create files failed: %s." % str(e))
+            print("> savePage(): Create files failed: %s." % str(e))
             return False
 
     #-----------------------------------------------------------------------------
-    def _soupfindnSave(self, pagefolder, tag2find='img', inner='src'):
+    def _soupfindnSave(self, url, pagefolder, tag2find='img', inner='src'):
         """ Saves on specified pagefolder all tag2find objects. """
         pagefolder = os.path.join(pagefolder, tag2find)
         if not os.path.exists(pagefolder): os.mkdir(pagefolder)
@@ -81,10 +82,9 @@ class urlDownloader(object):
                 filename = re.sub('\W+', '.', os.path.basename(res[inner]))
                 # print("> filename:", filename)
                 # Added the '.html' for the html file in the href
-                if tag2find == 'link':
-                    if not any(ext in filename for ext in ['css', 'png', 'ico', 'jpg', 'jpeg', 'mov', 'ogg', 'gif', 'xml','js']):
-                        filename += '.html'
-                fileurl = urljoin(self.url, res.get(inner))
+                if tag2find == 'link' and (not any(ext in filename for ext in self.linkType)):
+                    filename += '.html'
+                fileurl = urljoin(url, res.get(inner))
                 filepath = os.path.join(pagefolder, filename)
                 # rename html ref so can move html and folder of files anywhere
                 res[inner] = os.path.join(os.path.basename(pagefolder), filename)

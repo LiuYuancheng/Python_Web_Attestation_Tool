@@ -3,10 +3,10 @@
 # Name:        webScreenShoter.py
 #
 # Purpose:     This module will use different browser drivers API to capture the
-#              webpage's screen shot img based on the given url. The usr can also
-#              use pyQT-5 QtWebEngineWidgets to download the whole web side by set
-#              the related flag. The user can list all the url he wants to downlad 
-#              in the file "urllist.txt" .
+#              webpage's screen shot img based on the given url. The user can also
+#              use pyQT-5 QtWebEngineWidgets to download the whole web page by set
+#              the related flag. The user can list all the urls he wants to download 
+#              in the url file "urllist.txt" .
 #
 # Author:      Yuancheng Liu
 #
@@ -15,6 +15,7 @@
 # Copyright:   n.a
 # License:     n.a
 #-----------------------------------------------------------------------------
+
 import os
 import sys
 from time import sleep
@@ -26,18 +27,18 @@ from PyQt5.QtCore import Qt, QUrl, QTimer
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 
 GV_FLG = True  # Flag to identify whether use gloval value
-
 if GV_FLG: import webGlobal as gv
 URL_RCD = gv.URL_LIST if GV_FLG else 'urllist.txt'  # file to save url list
 RST_DIR = gv.DATA_DIR if GV_FLG else 'datasets'
-OUT_FILE = "shot.png"
+OUT_FILE = gv.SS_FILE_NAME if GV_FLG else 'shot.png'
 
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 
 class QTCapture(QWebEngineView):
     """ Capture the web page screen shot with QT5<QtWebEngineWidgets> driver."""
-    # Reference link: 
+    # Reference link:
+    # https://zetcode.com/pyqt/qwebengineview/
     # https://stackoverflow.com/questions/55231170/taking-a-screenshot-of-a-web-page-in-pyqt5
     # https://stackoverflow.com/questions/51154871/python-3-7-0-no-module-named-pyqt5-qtwebenginewidgets
 
@@ -70,17 +71,16 @@ class webScreenShoter(object):
         self.browserMD = browserMD
         self.qtApp = None
         self.qtDriver = None
-        if not self.browserMD:
-            self.qtApp = QApplication(sys.argv)
+        if not self.browserMD: self.qtApp = QApplication(sys.argv)
 
     #-----------------------------------------------------------------------------
     def getScreenShot(self, url, folderName, browserMD=None):
-        """ The the init set driver to captuer the web screen shot
+        """ Init driver to capture the web screen shot based on the mode flag.
         Args:
             url ([str]): web url string.
             folderName ([string]): folder path to save the web components.
             browserMD ([bool], optional): User can reset the driver if he want to 
-                change. Defaults to None.
+                change. True: Browser driver, False: QT5 driver. Defaults to None.
         Returns: [bool]: capture result.
         """
         if browserMD is bool: self.browserMD = browserMD
@@ -98,7 +98,7 @@ class webScreenShoter(object):
 
     #-----------------------------------------------------------------------------
     def _captureBM(self, url, outputDir):
-        """ Capture the url screen shot by Browser driver.
+        """ Capture the url screen shot by browser driver.
         Args:
             url ([string]): web url string.
             outputDir ([string]): folder path to save the web components.
@@ -109,8 +109,7 @@ class webScreenShoter(object):
             driverPath = gv.BROWSER_DRIVER_L if GV_FLG else "chromedriver"
         driver = webdriver.Chrome(executable_path=driverPath)
         driver.get(url)
-        # wait one second to let the browser to show the whole webpage
-        sleep(1)
+        sleep(1) # wait one second to let the browser to show the whole webpage
         if not os.path.exists(RST_DIR): os.mkdir(RST_DIR)
         filepath = os.path.join(RST_DIR, outputDir, OUT_FILE)
         #print("> path:"+filepath)
@@ -149,7 +148,6 @@ def main():
                     failCount += 1
     print("\n> Download result: download %s url, %s fail" %
           (str(count), str(failCount)))
-
 
 #-----------------------------------------------------------------------------
 if __name__ == '__main__':

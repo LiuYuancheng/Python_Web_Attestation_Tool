@@ -21,12 +21,11 @@
 import os
 from urllib.parse import urlparse
 
-import webGlobal as gv
 import webDownload as webDL
 import webScreenShoter as webSS
 #import phishpediaPKG as webPH
 
-GV_FLG = True  # Flag to identify whether use gloval value
+GV_FLG = True  # Flag to identify whether use global value
 
 if GV_FLG: import webGlobal as gv
 URL_RCD = gv.URL_LIST if GV_FLG else 'urllist.txt'  # file to save url list
