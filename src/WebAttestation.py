@@ -21,6 +21,7 @@
 import os
 from urllib.parse import urlparse
 
+import ConfigLoader as cfgL
 import webDownload as webDL
 import webScreenShoter as webSS
 #import phishpediaPKG as webPH
@@ -30,6 +31,8 @@ GV_FLG = True  # Flag to identify whether use global value
 if GV_FLG: import webGlobal as gv
 URL_RCD = gv.URL_LIST if GV_FLG else 'urllist.txt'  # file to save url list
 RST_DIR = gv.DATA_DIR if GV_FLG else 'datasets'
+URL_PCD_RCD = gv.URL_PCD_RCD if GV_FLG else "resultPcdurl.txt"
+URL_ERR_RCD = gv.URL_ERR_RCD if GV_FLG else "resultErrurl.txt"
 
 dlImg = gv.iDlImg if GV_FLG else True # download image
 dlHref = gv.iDLHref if GV_FLG else True # download the components linked by href.
@@ -37,31 +40,46 @@ dlScript = gv.iDlScript if GV_FLG else True # download java scripts
 
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
+def fileFunc(line):
+    if 'http' in line: return True
+    return False
+
 def main():
+    dataLoader = cfgL.ConfigLoader(URL_RCD, mode='r', logFlg=True)
+    pcdLoader = cfgL.ConfigLoader(URL_PCD_RCD, mode='ra', logFlg=True)
+    pcdLoader.appendLine('>Start', timeFlg=True, cmtChar='#') # Append the time rcd
+    errLoader = cfgL.ConfigLoader(URL_ERR_RCD, mode='w', logFlg=True)
+    errLoader.appendLine('>Start', timeFlg=True, cmtChar='#') # Append the time rcd
     downloader = webDL.urlDownloader(imgFlg=dlImg, linkFlg=dlHref, scriptFlg=dlScript)
     capturer = webSS.webScreenShoter()
     #checker = webPH.phishperidaPKG()
     count = failCount= 0
     if not os.path.exists(RST_DIR): os.mkdir(RST_DIR)
     print("> load url record file: %s" %URL_RCD)
-    with open(URL_RCD) as fp:
-        urllines = fp.readlines()
-        for line in urllines:
-            if line[0] in ['#', ' ', '\n', '\t', '\r']: continue  # jump comments/empty lines.
-            count += 1
-            print("> Process URL {}: {}".format(count, line.strip()))
-            if ('http' in line):
-                line = line.strip()
-                domain = str(urlparse(line).netloc)
-                folderName = "_".join((str(count), domain))
-                result_d = downloader.savePage(line, folderName)
-                result_c = capturer.getScreenShot(line, folderName)
-                #result_p = checker.phishperidaCheck(RST_DIR)
-                # soup.savePage('https://www.google.com', 'www_google_com')
-                if result_d and result_c: 
-                    print('> Finished.')
-                else:
-                    failCount +=1
+    #allurls = set(dataLoader.getLines(filterFun=fileFunc))
+    #pcdurls = set(pcdLoader.getLines(filterFun=fileFunc))
+    # urllines = allurls - pcdurl # YC: Not use set as we want keep the url sequece.
+    allurls = dataLoader.getLines(filterFun=fileFunc)
+    pcdurls = pcdLoader.getLines(filterFun=fileFunc)
+    print("> Ignore %s processed urls" %str(len(pcdurls)))
+    urllines = [x for x in allurls if x not in pcdurls]
+    for line in urllines:
+        count += 1
+        domain = str(urlparse(line).netloc)
+        folderName = "_".join((str(count), domain))
+        result_d = downloader.savePage(line, folderName)
+        result_c = capturer.getScreenShot(line, folderName)
+        #result_p = checker.phishperidaCheck(RST_DIR)
+        # soup.savePage('https://www.google.com', 'www_google_com')
+        if result_d and result_c: 
+            print('> Finished.')
+            pcdLoader.appendLine(line)
+        else:
+            failCount +=1
+            errLoader.appendLine(line)
+    pcdLoader.appendLine('End', timeFlg=True, cmtChar='#') # Append the time rcd
+    errLoader.appendLine('End', timeFlg=True, cmtChar='#') # Append the time rcd
+
     print("\n> Download result: download %s url, %s fail" %(str(count), str(failCount)))
 
 #-----------------------------------------------------------------------------
