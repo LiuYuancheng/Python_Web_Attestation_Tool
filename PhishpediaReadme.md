@@ -1,10 +1,10 @@
 # Phishpedia Package 
 
-
+**Program Design Purpose**: We want import the NUS-Phishperida phishing URLs  detection module into other project. The module need to be OOP so other program can use multi-threading to running several Phishperida module to check batch of URLs(10K ~ 100K).
 
 #### Introduction
 
-This module is used to package the NUS-Phishperida phishing url  detection project as a black box API for other project to use. Put this module in the same folder of the NUS-Phishperida's 'main' module. NUS-Phishperida link: https://github.com/lindsey98/Phishpedia
+This module is used to package the NUS-Phishperida phishing URLs  detection project as a black box API for other project to use. Put this module in the same folder of the NUS-Phishperida's 'main' module. NUS-Phishperida link: https://github.com/lindsey98/Phishpedia
 
 ###### Program Workflow
 
@@ -38,7 +38,7 @@ https://pytorch.org/get-started/previous-versions/
 
 **Install Detectron-2 for CPU only** 
 
-use the offical pre-build 
+use the official pre-build 
 
 ```
 pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.8/index.html
@@ -52,7 +52,7 @@ Follow this link: https://github.com/lindsey98/Phishpedia
 
 ###### Configuration Detail
 
-Config steps file: ***doc/Phishpedia_cfg.md***
+Config steps file: ***`doc/Phishpedia_cfg.md`***
 
 ------
 
@@ -60,9 +60,9 @@ Config steps file: ***doc/Phishpedia_cfg.md***
 
 #### Program Usage
 
-1. [optional] If you don't have Nvidia Graph card enable the CPU mode:
+1. [optional] The machine learning part of Phisperida need to use the GPU of the computer; If you don't have Nvidia Graph card, you need to enable the CPU mode:
 
-   File: *Phishpedia/src/detectron2_pedia* line 47: 
+   File: *`Phishpedia/src/detectron2_pedia`* line 47: 
 
    ```
    # uncomment if you installed detectron2 cpu version
@@ -79,9 +79,11 @@ Config steps file: ***doc/Phishpedia_cfg.md***
 
 4. Check the result:
 
-   Result file: ***doc/cfg_steps***
+   Result file: ***`doc/cfg_steps`***
 
-5. 
+5. --
+
+   
 
 ------
 
