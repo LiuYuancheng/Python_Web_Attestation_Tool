@@ -11,7 +11,7 @@ urlList = ["https://user:pwd[@example.com",
             "https://]user:[pwd@example.com]\n",
             "https://]user:[pwd@example.com][",
             "https://{]user:[pwd@example.com]",
-            "العربية | أبرز الأخبار العالمية والمحلية العاجلة",
+            "https://العربية | أبرز الأخبار العالمية والمحلية العاجلة",
             ]
 
 for urlStr in urlList:
