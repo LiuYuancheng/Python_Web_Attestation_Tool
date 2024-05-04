@@ -6,16 +6,16 @@
 #              
 # Author:      Yuancheng Liu
 #
-# Created:     2020/11/24
-# Copyright:   YC @ Singtel Cyber Security Research & Development Laboratory
-# License:     YC
+# Version:     v_0.1.2
+# Copyright:   Copyright (c) 2024 LiuYuancheng
+# License:     MIT License 
 #-----------------------------------------------------------------------------
 import os
 
 print("Current working directory is : %s" % os.getcwd())
 dirpath = os.path.dirname(__file__)
 print("Current source code location : %s" % dirpath)
-APP_NAME = 'WebAttestation_v0.1'
+APP_NAME = 'WebAttestation_v0.1.2'
 
 #------<CONSTANTS>-------------------------------------------------------------
 URL_LIST = os.path.join(dirpath , "urllist.txt")    # file to save the url need to process.

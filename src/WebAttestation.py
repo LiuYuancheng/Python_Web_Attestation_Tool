@@ -14,21 +14,22 @@
 # Author:      Yuancheng Liu
 #
 # Created:     2021/11/25
-# Version:     v_0.1
-# Copyright:   n.a
-# License:     n.a
+# Version:     v_0.1.2
+# Copyright:   Copyright (c) 2024 LiuYuancheng
+# License:     MIT License 
 #-----------------------------------------------------------------------------
 import os
 from urllib.parse import urlparse
 
 import ConfigLoader as cfgL
-import webDownload as webDL
+import webDownloader as webDL
 import webScreenShoter as webSS
 #import phishpediaPKG as webPH
 
 GV_FLG = True  # Flag to identify whether use global value
 
 if GV_FLG: import webGlobal as gv
+
 URL_RCD = gv.URL_LIST if GV_FLG else 'urllist.txt'  # file to save url list
 RST_DIR = gv.DATA_DIR if GV_FLG else 'datasets'
 URL_PCD_RCD = gv.URL_PCD_RCD if GV_FLG else "resultPcdurl.txt"
@@ -50,10 +51,12 @@ def main():
     pcdLoader.appendLine('>Start', timeFlg=True, cmtChar='#') # Append the time rcd
     errLoader = cfgL.ConfigLoader(URL_ERR_RCD, mode='w', logFlg=True)
     errLoader.appendLine('>Start', timeFlg=True, cmtChar='#') # Append the time rcd
-    downloader = webDL.urlDownloader(imgFlg=dlImg, linkFlg=dlHref, scriptFlg=dlScript)
+    downloader = webDL.webDownloader(imgFlg=dlImg, linkFlg=dlHref, scriptFlg=dlScript)
     capturer = webSS.webScreenShoter()
     #checker = webPH.phishperidaPKG()
-    count = failCount= 0
+    urlCount = failCount= 0
+    outputFolder = os.path.join(gv.dirpath,  "outputFolder")
+    if not os.path.exists(outputFolder): os.mkdir(outputFolder)
     if not os.path.exists(RST_DIR): os.mkdir(RST_DIR)
     print("> load url record file: %s" %URL_RCD)
     #allurls = set(dataLoader.getLines(filterFun=fileFunc))
@@ -64,11 +67,11 @@ def main():
     print("> Ignore %s processed urls" %str(len(pcdurls)))
     urllines = [x for x in allurls if x not in pcdurls]
     for line in urllines:
-        count += 1
+        urlCount += 1
         domain = str(urlparse(line).netloc)
-        folderName = "_".join((str(count), domain))
-        result_d = downloader.savePage(line, folderName)
-        result_c = capturer.getScreenShot(line, folderName)
+        downloadFolderPath = os.path.join(outputFolder,'_'.join((str(urlCount), domain)))
+        result_d = downloader.downloadWebContents(line, downloadFolderPath)
+        result_c = capturer.getScreenShot(line, downloadFolderPath)
         #result_p = checker.phishperidaCheck(RST_DIR)
         # soup.savePage('https://www.google.com', 'www_google_com')
         if result_d and result_c: 
@@ -80,7 +83,7 @@ def main():
     pcdLoader.appendLine('End', timeFlg=True, cmtChar='#') # Append the time rcd
     errLoader.appendLine('End', timeFlg=True, cmtChar='#') # Append the time rcd
 
-    print("\n> Download result: download %s url, %s fail" %(str(count), str(failCount)))
+    print("\n> Download result: download %s url, %s fail" %(str(urlCount), str(failCount)))
 
 #-----------------------------------------------------------------------------
 if __name__ == '__main__':
