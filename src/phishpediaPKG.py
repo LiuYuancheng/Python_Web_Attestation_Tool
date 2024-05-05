@@ -7,7 +7,7 @@
 #              module.
 #              NUS-Phishperida link: https://github.com/lindsey98/Phishpedia
 # 
-# Author:      Yuancheng Liu
+# Author:      
 #
 # Created:     2020/11/24
 # Version:     v_0.1
